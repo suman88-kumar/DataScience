@@ -1,0 +1,49 @@
+set.seed(2018)
+lambda <- 0.2
+par(mfrow=c(1,2))
+hist(rexp(1000, lambda), prob=TRUE, breaks = 20, main = "Exponential distribution in R")
+lines(density(rexp(1000, lambda)), lwd=1, col="red")
+
+n <- 40
+meansample40 = NULL
+for (i in 1 : 1000) meansample40 <- c(meansample40, mean(rexp(n, lambda)))
+hist(meansample40, prob=TRUE, breaks = 20, main = "Distribution of averages of 40 Exponentials", xlab = "Mean of 40 samples")
+
+theoritical_mean <- round(1/lambda,3)
+sample_mean <- round(mean(meansample40),3)
+abline(v = theoritical_mean, col = "red", lwd = 2)
+abline(v = sample_mean, col = "blue", lwd = 1)
+lines(density(meansample40), lwd=1, col="blue")
+legend("topright",col=c("blue","red"),lty=1,lwd=2,legend=c("Sample","Theoritical"))
+sample_mean
+xfit <- seq(min(meansample40), max(meansample40), length=30)
+yfit <- dnorm(xfit, mean=1/lambda, sd=(1/lambda/sqrt(n)))
+lines(xfit, yfit, pch=22, col="red", lty=2)
+-------------------------------------------------------------
+
+theoritical_variance <- round((1/lambda)^2/n,3)
+sample_variance <- round(var(meansample40),3)
+data_table <- matrix(c(theoritical_mean, sample_mean, theoritical_variance, sample_variance),ncol=2, byrow = TRUE)
+colnames(data_table) <- c("Theoritical","Sample")
+rownames(data_table) <- c("Mean","Variance")
+data_table
+
+-------------------------------------------------------------
+
+par(mfrow=c(1,2))
+
+qqnorm(rexp(1000, lambda),main="Original Exponential distribution")
+qqline(rexp(1000, lambda), col = "red")
+
+qqnorm(meansample40,main="Distribution of averages of Exponentials")
+qqline(meansample40, col = "red")
+
+t.test(meansample40)
+-------------------------------------------------------------
+
+Due to the central limit theorem, the averages of samples follow normal distribution. The figure above also shows the density computed using the histogram and the normal density plotted with theoretical mean and variance values. Also, the q-q plot below suggests the normality.
+one may visually verify the central limit theorem, since the sample
+distribution of the mean is approxiamately normal, even though the original
+distribution is exponential.
+This distribution looks far more Gaussian than the original uniform distribution!
+Based on the Central Limit Theorem, the theoretical mean of the exponential distribution is 1/lambda, the standard deviation is also 1/lambda, and it follows normal distribution.
