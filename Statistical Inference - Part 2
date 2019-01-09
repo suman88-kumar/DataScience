@@ -1,0 +1,32 @@
+library(ggplot2)
+# Load the ToothGrowth data
+data("ToothGrowth")
+
+# Provide a basic summary of the data
+summary(ToothGrowth)
+
+# Perform some basic exploratory data analyses
+head(ToothGrowth)
+str(ToothGrowth)
+# Convert dose variable into a factor
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+# Check whether dose variable is now converted into a factor
+str(ToothGrowth)
+ToothGrowth_OJ <-subset(ToothGrowth, supp=="OJ")
+str(ToothGrowth_OJ)
+meanLength_By_Dose_OJ <- split(ToothGrowth_OJ$len, ToothGrowth_OJ$dose)
+sapply(meanLength_By_Dose_OJ, mean)
+ToothGrowth_VC <-subset(ToothGrowth, supp=="VC")
+meanLength_By_Dose_VC <- split(ToothGrowth_VC$len, ToothGrowth_VC$dose)
+sapply(meanLength_By_Dose_VC, mean)
+# Draw BoxPlot to depict growth in tooth-length ('len') vs. the dose ('dose') for each supplement method ('supp')
+ggplot(ToothGrowth, aes(x=dose, y=len, fill=dose)) + geom_boxplot() + facet_grid(~ supp) + xlab("Dose") + ylab("Tooth-length")
+# Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose
+t.test(len~supp, data=ToothGrowth)
+# Since the p-value is greater than 0.05 and the confidence interval of the test contains zero, we can't state with confidence that change in supplement method has any impact on Tooth growth.
+t.test(ToothGrowth$len[ToothGrowth$dose == 0.5], ToothGrowth$len[ToothGrowth$dose == 1], paired = FALSE, var.equal = FALSE)
+t.test(ToothGrowth$len[ToothGrowth$dose == 0.5], ToothGrowth$len[ToothGrowth$dose == 2], paired = FALSE, var.equal = FALSE)
+t.test(ToothGrowth$len[ToothGrowth$dose == 1], ToothGrowth$len[ToothGrowth$dose == 2], paired = FALSE, var.equal = FALSE)
+# Since all the combination of tests return a p-value of 0 and the confidence intervals donot contain 0, we reject the null hypothesis and conclude that Tooth-length is directly co-related to dose.
+# Summary
+# We can conclude that supplement type may not have any effect on tooth growth, but increasing the dose level leads to increased tooth growth.
